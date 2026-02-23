@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Node MySQL CRUD</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 16px; }
+      h1 { text-align: center; }
+      form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+      input { padding: 8px; font-size: 14px; }
+      button { padding: 8px 12px; font-size: 14px; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+      th { background: #f4f4f4; }
+      .actions button { margin-right: 6px; }
+      .full { grid-column: 1 / -1; }
+    </style>
+  </head>
+  <body>
+    <h1>Node + MySQL CRUD</h1>
+
+    <!-- Simple form to add/update users -->
+    <form id="user-form">
+      <input type="text" id="user_id" placeholder="User ID" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="text" id="phone" placeholder="Phone" required />
+      <div class="full">
+        <button type="submit" id="submit-btn">Add</button>
+        <button type="button" id="cancel-btn">Cancel</button>
+      </div>
+    </form>
+
+    <!-- Table to display users -->
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User ID</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="users-table-body"></tbody>
+    </table>
+
+    <script src="script.js"></script>
+  </body>
+</html>
