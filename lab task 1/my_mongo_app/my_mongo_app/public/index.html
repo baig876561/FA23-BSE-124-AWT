@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User CRUD</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 720px; margin: 20px auto; }
+    form { margin-bottom: 20px; padding: 12px; border: 1px solid #ccc; }
+    label { display: block; margin-bottom: 6px; }
+    input { width: 100%; padding: 8px; margin-bottom: 10px; }
+    button { padding: 8px 12px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    .section-title { margin-top: 30px; }
+    #message { margin: 10px 0; color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <h2>User CRUD</h2>
+
+  <div id="message"></div>
+
+  <h3 class="section-title">Create User</h3>
+  <form id="create-form">
+    <label>Name</label>
+    <input type="text" name="name" placeholder="Enter Name" required>
+    <label>Email</label>
+    <input type="email" name="email" placeholder="Enter Email" required>
+    <label>Age</label>
+    <input type="number" name="age" placeholder="Enter Age">
+    <button type="submit">Create</button>
+  </form>
+
+  <h3 class="section-title">Update User</h3>
+  <form id="update-form">
+    <label>User ID</label>
+    <input type="text" name="id" placeholder="Enter User ID" required>
+    <label>Name</label>
+    <input type="text" name="name" placeholder="Enter Name">
+    <label>Email</label>
+    <input type="email" name="email" placeholder="Enter Email">
+    <label>Age</label>
+    <input type="number" name="age" placeholder="Enter Age">
+    <button type="submit">Update</button>
+  </form>
+
+  <h3 class="section-title">Delete User</h3>
+  <form id="delete-form">
+    <label>User ID</label>
+    <input type="text" name="id" placeholder="Enter User ID" required>
+    <button type="submit">Delete</button>
+  </form>
+
+  <h3 class="section-title">Users</h3>
+  <button id="refresh-btn">Refresh List</button>
+  <table id="users-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Age</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const messageEl = document.getElementById("message");
+    const usersTableBody = document.querySelector("#users-table tbody");
+
+    const showMessage = (msg, isError = false) => {
+      messageEl.textContent = msg;
+      messageEl.className = isError ? "error" : "";
+    };
+
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch("/users");
+        const data = await res.json();
+        usersTableBody.innerHTML = data
+          .map(
+            (u) => `
+            <tr>
+              <td>${u._id}</td>
+              <td>${u.name || ""}</td>
+              <td>${u.email || ""}</td>
+              <td>${u.age ?? ""}</td>
+            </tr>`
+          )
+          .join("");
+      } catch (err) {
+        showMessage("Failed to load users", true);
+      }
+    };
+
+    document.getElementById("create-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const body = {
+        name: form.name.value,
+        email: form.email.value,
+        age: form.age.value ? Number(form.age.value) : undefined,
+      };
+      try {
+        const res = await fetch("/users/add", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) throw new Error("Create failed");
+        form.reset();
+        showMessage("Created user");
+        fetchUsers();
+      } catch (err) {
+        showMessage("Create failed", true);
+      }
+    });
+
+    document.getElementById("update-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const id = form.id.value.trim();
+      const payload = {
+        name: form.name.value || undefined,
+        email: form.email.value || undefined,
+        age: form.age.value ? Number(form.age.value) : undefined,
+      };
+      try {
+        const res = await fetch(`/users/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("Update failed");
+        showMessage("Updated user");
+        fetchUsers();
+      } catch (err) {
+        showMessage("Update failed", true);
+      }
+    });
+
+    document.getElementById("delete-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = e.target.id.value.trim();
+      try {
+        const res = await fetch(`/users/${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("Delete failed");
+        showMessage("Deleted user");
+        fetchUsers();
+      } catch (err) {
+        showMessage("Delete failed", true);
+      }
+    });
+
+    document.getElementById("refresh-btn").addEventListener("click", fetchUsers);
+
+    fetchUsers();
+  </script>
+</body>
+</html>
