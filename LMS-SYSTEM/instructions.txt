@@ -34,31 +34,3 @@ Step 9 : Run command : npm run dev
 Step 10 : Open chrome or other broswer and type : localhost:5173 and project run successfully...
 
 
-ADMIN Credentails : 
-
-BEFORE LOGIN, FIRSTLY YOU NEED TO PASETE THIS documents into users collection : 
-{
-  "_id": {
-    "$oid": "64fea729cb871bf64c42010c"
-  },
-  "email": "admin@gmail.com",
-  "fatherName": "Muhammad Ahmed",
-  "role": "Admin",
-  "password": "$2b$10$HmytXGhI64nyQnvKpB/xCutFxu11KHd/W29b50siqtxeH.9UaaUhO",
-  "accountStatus": "Active",
-  "__v": 0,
-  "name": "Muhammad Ali",
-  "imagePath": "uploads/1700306417988-465995069.png",
-  "updatedAt": {
-    "$date": "2023-11-18T11:20:18.692Z"
-  }
-}
-
-Email : admin@gmail.com
-Password : admin
-
-Note : When admin create student or teacher then random password generate and  email send to student or teacher 
-to inform that your account is created and your password is this and you can change password later. 
-
-
-
