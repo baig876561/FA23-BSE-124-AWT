@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENT
+  MODERATOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AdStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  PAYMENT_PENDING
+  PAYMENT_SUBMITTED
+  PAYMENT_VERIFIED
+  SCHEDULED
+  PUBLISHED
+  EXPIRED
+  ARCHIVED
+}
+
+model User {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  password  String
+  name      String?
+  role      Role       @default(CLIENT)
+  status    UserStatus @default(PENDING)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  ads           Ad[]
+  payments      Payment[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  ads       Ad[]
+}
+
+model City {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  ads       Ad[]
+}
+
+model Package {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  durationDays Int
+  visibilityRate Int   @default(1)
+  isFeatured  Boolean  @default(false)
+  ads         Ad[]
+}
+
+model Ad {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  status      AdStatus @default(DRAFT)
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  
+  cityId      String
+  city        City     @relation(fields: [cityId], references: [id])
+  
+  packageId   String
+  package     Package  @relation(fields: [packageId], references: [id])
+
+  publishDate DateTime?
+  expiryDate  DateTime?
+
+  media       AdMedia[]
+  payments    Payment[]
+  auditLogs   AuditLog[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AdMedia {
+  id             String   @id @default(uuid())
+  sourceType     String   // e.g., "YOUTUBE", "GITHUB", "IMAGE"
+  originalUrl    String
+  thumbnailUrl   String?
+  validationStat String   @default("PENDING") // PENDING, VALID, FAILED
+
+  adId           String
+  ad             Ad       @relation(fields: [adId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id            String   @id @default(uuid())
+  amount        Float
+  proofUrl      String?  // Since external links are required, client drops imgur link here
+  transactionRef String? @unique
+  status        String   @default("PENDING") // PENDING, VERIFIED, REJECTED
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  adId          String
+  ad            Ad       @relation(fields: [adId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  message   String
+  read      Boolean  @default(false)
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  action     String   // e.g., "STATUS_CHANGE"
+  details    String
+  
+  adId       String?
+  ad         Ad?      @relation(fields: [adId], references: [id], onDelete: SetNull)
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+
+  createdAt  DateTime @default(now())
+}
