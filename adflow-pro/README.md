@@ -1,3 +1,12 @@
+<img width="960" height="506" alt="admin dashboard" src="https://github.com/user-attachments/assets/4f7cd89c-6b31-4a52-8949-908dc07c7299" />
+<img width="960" height="507" alt="client acces" src="https://github.com/user-attachments/assets/2c9c5437-2a4b-45ac-aa6f-040de5e332dd" />
+<img width="960" height="509" alt="create ads" src="https://github.com/user-attachments/assets/50ee6f19-6d98-4afe-afd4-348abefe36d7" />
+<img width="960" height="511" alt="litings" src="https://github.com/user-attachments/assets/d5300ee7-46e4-4cec-80f3-63799026386c" />
+<img width="959" height="508" alt="main page" src="https://github.com/user-attachments/assets/13181a58-3256-4952-aba4-eb8c0b7e097a" />
+<img width="960" height="507" alt="moderaator acces" src="https://github.com/user-attachments/assets/1a60b7e8-eb3d-461d-81ac-338cdc900f6a" />
+<img width="960" height="537" alt="pricing" src="https://github.com/user-attachments/assets/d6ba398a-2fda-4e71-a4f3-9c2bdcc19389" />
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
