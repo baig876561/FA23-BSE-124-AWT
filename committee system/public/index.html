@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>کمیٹی Pro — Committee Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06090f;--surface:#0d1117;--card:#111822;--card2:#151f2e;
+  --border:#1c2a3a;--border2:#243040;
+  --accent:#3b82f6;--accent2:#60a5fa;--accent-dim:rgba(59,130,246,.12);
+  --gold:#f59e0b;--gold-dim:rgba(245,158,11,.12);
+  --green:#10b981;--green-dim:rgba(16,185,129,.12);
+  --red:#ef4444;--red-dim:rgba(239,68,68,.12);
+  --purple:#8b5cf6;--purple-dim:rgba(139,92,246,.12);
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#475569;
+  --font-h:'Cinzel',serif;--font:'DM Sans',sans-serif;--font-m:'JetBrains Mono',monospace;
+  --r:14px;--r2:10px;--r3:8px;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ===================== LOGIN ===================== */
+#login-screen{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(59,130,246,.15) 0%,transparent 60%),
+             radial-gradient(ellipse 40% 40% at 80% 80%,rgba(139,92,246,.1) 0%,transparent 60%),var(--bg);
+}
+.login-box{
+  width:420px;max-width:95vw;
+  background:var(--card);border:1px solid var(--border);border-radius:24px;
+  padding:48px 40px;box-shadow:var(--shadow);
+  animation:fadeUp .5s ease;
+}
+.login-logo{text-align:center;margin-bottom:36px}
+.login-logo h1{font-family:var(--font-h);font-size:2rem;color:var(--accent);letter-spacing:2px}
+.login-logo p{font-size:.78rem;color:var(--text2);margin-top:6px;font-family:var(--font-m);letter-spacing:2px}
+.login-badge{
+  display:inline-block;background:var(--accent-dim);border:1px solid rgba(59,130,246,.3);
+  color:var(--accent2);padding:4px 14px;border-radius:20px;font-size:.72rem;font-family:var(--font-m);
+  margin-top:10px;letter-spacing:1px;
+}
+.login-box .tabs{display:flex;gap:0;margin-bottom:28px;background:var(--surface);border-radius:var(--r2);padding:4px}
+.login-box .tab-btn{flex:1;padding:10px;border:none;background:none;color:var(--text2);cursor:pointer;font-family:var(--font);font-size:.875rem;font-weight:500;border-radius:8px;transition:all .2s}
+.login-box .tab-btn.active{background:var(--accent);color:#fff}
+.login-form-area{display:none}.login-form-area.active{display:block}
+.login-hint{background:var(--accent-dim);border:1px solid rgba(59,130,246,.2);border-radius:var(--r3);padding:12px 14px;font-size:.78rem;color:var(--accent2);font-family:var(--font-m);margin-bottom:20px;line-height:1.6}
+
+/* ===================== LAYOUT ===================== */
+#app{display:none}
+.layout{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{
+  width:260px;min-height:100vh;position:fixed;left:0;top:0;bottom:0;
+  background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:200;transition:transform .3s;
+}
+.sidebar-header{padding:24px 20px 20px;border-bottom:1px solid var(--border)}
+.sidebar-logo h2{font-family:var(--font-h);font-size:1.3rem;color:var(--accent)}
+.sidebar-logo p{font-size:.68rem;color:var(--text3);font-family:var(--font-m);letter-spacing:2px;margin-top:3px}
+.sidebar-user{
+  margin:16px 12px 0;padding:12px;background:var(--accent-dim);
+  border:1px solid rgba(59,130,246,.2);border-radius:var(--r2);
+}
+.sidebar-user .uname{font-weight:600;font-size:.875rem}
+.sidebar-user .urole{font-size:.7rem;color:var(--accent2);font-family:var(--font-m);letter-spacing:1px;margin-top:2px}
+
+.nav{flex:1;padding:12px 8px;overflow-y:auto}
+.nav-section{font-size:.65rem;color:var(--text3);font-family:var(--font-m);letter-spacing:2px;text-transform:uppercase;padding:8px 12px 4px;margin-top:8px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--r2);
+  cursor:pointer;font-size:.875rem;font-weight:500;color:var(--text2);
+  transition:all .2s;border:none;background:none;width:100%;text-align:left;margin-bottom:2px;
+}
+.nav-item:hover{background:var(--accent-dim);color:var(--text)}
+.nav-item.active{background:var(--accent-dim);color:var(--accent);border-left:3px solid var(--accent)}
+.nav-item .ni{font-size:1rem;width:20px;text-align:center;flex-shrink:0}
+
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border)}
+.btn-logout{width:100%;padding:10px;background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.3);border-radius:var(--r2);cursor:pointer;font-family:var(--font);font-size:.875rem;font-weight:600;transition:all .2s}
+.btn-logout:hover{background:rgba(239,68,68,.25)}
+
+/* MAIN */
+.main{margin-left:260px;min-height:100vh;padding:28px 32px}
+.page{display:none}.page.active{display:block}
+
+/* PAGE HEADER */
+.pg-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.pg-title{font-family:var(--font-h);font-size:1.8rem;letter-spacing:1px}
+.pg-sub{font-size:.72rem;color:var(--text3);font-family:var(--font-m);letter-spacing:1px;margin-top:4px}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px}
+.card-title{font-size:1rem;font-weight:600;margin-bottom:18px;color:var(--text)}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.stat{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;
+  position:relative;overflow:hidden;transition:border-color .2s,transform .2s;
+}
+.stat:hover{border-color:var(--accent);transform:translateY(-2px)}
+.stat-bar{position:absolute;top:0;left:0;right:0;height:2px}
+.stat-bar.blue{background:linear-gradient(90deg,var(--accent),transparent)}
+.stat-bar.gold{background:linear-gradient(90deg,var(--gold),transparent)}
+.stat-bar.green{background:linear-gradient(90deg,var(--green),transparent)}
+.stat-bar.red{background:linear-gradient(90deg,var(--red),transparent)}
+.stat-bar.purple{background:linear-gradient(90deg,var(--purple),transparent)}
+.stat-label{font-size:.68rem;color:var(--text3);font-family:var(--font-m);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.stat-value{font-size:1.8rem;font-weight:700;font-family:var(--font-h)}
+.stat-value.blue{color:var(--accent)}
+.stat-value.gold{color:var(--gold)}
+.stat-value.green{color:var(--green)}
+.stat-value.red{color:var(--red)}
+.stat-value.purple{color:var(--purple)}
+.stat-sub{font-size:.72rem;color:var(--text3);margin-top:4px}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead tr{border-bottom:1px solid var(--border)}
+th{padding:11px 14px;text-align:left;font-size:.65rem;color:var(--text3);font-family:var(--font-m);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+td{padding:13px 14px;font-size:.875rem;border-bottom:1px solid rgba(28,42,58,.5)}
+tbody tr:hover{background:rgba(59,130,246,.04)}
+tbody tr:last-child td{border-bottom:none}
+
+/* BADGES */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.65rem;font-family:var(--font-m);font-weight:600;letter-spacing:.5px}
+.b-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+.b-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.b-gold{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(245,158,11,.3)}
+.b-blue{background:var(--accent-dim);color:var(--accent2);border:1px solid rgba(59,130,246,.3)}
+.b-purple{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(139,92,246,.3)}
+
+/* BUTTONS */
+.btn{padding:10px 20px;border-radius:var(--r2);border:none;cursor:pointer;font-family:var(--font);font-size:.875rem;font-weight:600;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
+.btn-gold{background:var(--gold);color:#000}.btn-gold:hover{filter:brightness(1.1)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{padding:6px 12px;font-size:.78rem;border-radius:var(--r3)}
+.btn-danger{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.3)}.btn-danger:hover{background:rgba(239,68,68,.25)}
+.btn-success{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,.3)}.btn-success:hover{background:rgba(16,185,129,.25)}
+.btn-purple{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(139,92,246,.3)}.btn-purple:hover{background:rgba(139,92,246,.25)}
+
+/* FORMS */
+.form-group{margin-bottom:16px}
+label.lbl{display:block;font-size:.68rem;color:var(--text3);font-family:var(--font-m);letter-spacing:1px;text-transform:uppercase;margin-bottom:7px}
+input,select,textarea{
+  width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r2);
+  padding:11px 14px;color:var(--text);font-family:var(--font);font-size:.9rem;
+  transition:border-color .2s;outline:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+select option{background:var(--card)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;width:560px;max-width:95vw;max-height:88vh;overflow-y:auto;animation:fadeUp .3s ease}
+.modal h2{font-family:var(--font-h);font-size:1.4rem;margin-bottom:24px;color:var(--accent)}
+
+/* MEMBER SLOTS */
+.slots-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.slot{background:var(--bg);border:1px solid var(--border2);border-radius:var(--r2);padding:12px}
+.slot-num{font-size:.65rem;color:var(--accent);font-family:var(--font-m);letter-spacing:1px;margin-bottom:6px}
+.slot select{padding:8px 10px;font-size:.8rem}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.tab-btn2{padding:10px 18px;border:none;background:none;color:var(--text2);cursor:pointer;font-family:var(--font);font-size:.875rem;font-weight:500;border-bottom:2px solid transparent;transition:all .2s;margin-bottom:-1px}
+.tab-btn2.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-btn2:hover{color:var(--text)}
+.tab-content2{display:none}.tab-content2.active{display:block}
+
+/* ALERTS */
+.alert{padding:11px 14px;border-radius:var(--r2);font-size:.83rem;margin-bottom:14px}
+.alert-err{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.alert-ok{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+
+/* EMPTY */
+.empty{text-align:center;padding:50px 20px;color:var(--text3)}
+.empty-icon{font-size:2.8rem;margin-bottom:12px}
+.empty h3{font-family:var(--font-h);font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+
+/* COMMITTEE CARDS */
+.c-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.c-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.c-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 32px rgba(59,130,246,.12)}
+.c-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--purple))}
+.c-card h3{font-family:var(--font-h);font-size:1.1rem;margin-bottom:10px}
+.c-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.c-pill{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:.72rem;font-family:var(--font-m);color:var(--text3)}
+.c-pill span{color:var(--text2)}
+.prog-wrap{margin-top:14px}
+.prog-lbl{display:flex;justify-content:space-between;font-size:.68rem;color:var(--text3);margin-bottom:5px}
+.prog-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--purple));border-radius:2px;transition:width .6s}
+
+/* BACK BTN */
+.back-btn{display:inline-flex;align-items:center;gap:8px;background:none;border:none;color:var(--text3);cursor:pointer;font-family:var(--font);font-size:.875rem;padding:0;margin-bottom:18px;transition:color .2s}
+.back-btn:hover{color:var(--accent)}
+
+/* REPORT CARDS */
+.report-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:12px;transition:border-color .2s}
+.report-card:hover{border-color:var(--accent2)}
+.report-card h4{font-weight:600;margin-bottom:12px;font-size:.95rem}
+.report-row{display:flex;justify-content:space-between;font-size:.83rem;padding:5px 0;border-bottom:1px solid rgba(28,42,58,.5)}
+.report-row:last-child{border-bottom:none}
+.report-row .lv{color:var(--text3)}.report-row .rv{font-family:var(--font-m);font-weight:600;color:var(--gold)}
+.report-row .rv.green{color:var(--green)}.report-row .rv.red{color:var(--red)}.report-row .rv.blue{color:var(--accent2)}
+
+/* PROFILE */
+.profile-header{display:flex;align-items:center;gap:20px;margin-bottom:24px}
+.avatar{width:64px;height:64px;border-radius:50%;background:var(--accent-dim);border:2px solid rgba(59,130,246,.4);display:flex;align-items:center;justify-content:center;font-size:1.8rem}
+
+/* PRINT */
+@media print{
+  .sidebar,.btn,.btn-sm,.modal-overlay,.pg-header button{display:none!important}
+  .main{margin-left:0!important;padding:10px!important}
+  body{background:#fff;color:#000}
+  .card,.stat,.report-card{border:1px solid #ccc;background:#fff}
+  .stat-value,.report-row .rv{color:#000!important}
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeUp .4s ease}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* SEARCH */
+.search-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.search-bar input{flex:1;min-width:200px}
+.search-bar select{width:auto;min-width:150px}
+
+/* NOTIFICATION DOT */
+.notif{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-left:4px;vertical-align:middle}
+.amount-cell{font-family:var(--font-m);font-weight:600;color:var(--gold)}
+
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:none}
+  .main{margin-left:0;padding:16px}
+  .form-row{grid-template-columns:1fr}
+  .slots-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- =================== LOGIN SCREEN =================== -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <h1>کمیٹی Pro</h1>
+      <p>COMMITTEE MANAGEMENT SYSTEM</p>
+      <span class="login-badge">PAKISTAN · PKR · 2025</span>
+    </div>
+
+    <div class="tabs" style="margin-bottom:20px">
+      <button class="tab-btn active" onclick="loginTab('admin')">🔐 Admin Login</button>
+      <button class="tab-btn" onclick="loginTab('member')">👤 Member Login</button>
+    </div>
+
+    <div id="login-admin" class="login-form-area active">
+      <div class="login-hint">Default admin: <strong>admin</strong> / <strong>admin123</strong></div>
+      <div id="login-err" class="alert alert-err" style="display:none"></div>
+      <div class="form-group"><label class="lbl">Username</label><input id="l-user" type="text" placeholder="admin" value="admin"></div>
+      <div class="form-group"><label class="lbl">Password</label><input id="l-pass" type="password" placeholder="••••••••" value="admin123" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn btn-primary" style="width:100%;padding:13px;font-size:1rem" onclick="doLogin()">Login →</button>
+    </div>
+
+    <div id="login-member" class="login-form-area">
+      <div class="login-hint">Enter your username/email & password. New? <a href="#" onclick="showScreen('register')" style="color:var(--accent2)">Create account</a></div>
+      <div id="login-err2" class="alert alert-err" style="display:none"></div>
+      <div class="form-group"><label class="lbl">Username or Email</label><input id="l-user2" type="text" placeholder="username or email@..."></div>
+      <div class="form-group"><label class="lbl">Password</label><input id="l-pass2" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin2()"></div>
+      <div style="text-align:right;margin-top:-8px;margin-bottom:14px"><a href="#" onclick="showScreen('forgot')" style="font-size:.8rem;color:var(--accent2)">Forgot password?</a></div>
+      <button class="btn btn-primary" style="width:100%;padding:13px;font-size:1rem" onclick="doLogin2()">Login →</button>
+      <div style="text-align:center;margin-top:14px;font-size:.83rem;color:var(--text3)">Don't have an account? <a href="#" onclick="showScreen('register')" style="color:var(--accent2)">Register</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER SCREEN -->
+<div id="register-screen" style="display:none;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(59,130,246,.15) 0%,transparent 60%),var(--bg)">
+  <div class="login-box">
+    <div class="login-logo"><h1>کمیٹی Pro</h1><p>CREATE ACCOUNT</p></div>
+    <div id="reg-alert" class="alert" style="display:none"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="lbl">Full Name *</label><input id="r-name" type="text" placeholder="Ahmad Ali"></div>
+      <div class="form-group"><label class="lbl">Username *</label><input id="r-username" type="text" placeholder="ahmad_ali"></div>
+    </div>
+    <div class="form-group"><label class="lbl">Email *</label><input id="r-email" type="email" placeholder="email@example.com"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="lbl">Password *</label><input id="r-pass" type="password" placeholder="Min 6 chars"></div>
+      <div class="form-group"><label class="lbl">Phone</label><input id="r-phone" type="text" placeholder="0301-1234567"></div>
+    </div>
+    <div class="form-group"><label class="lbl">CNIC (optional)</label><input id="r-cnic" type="text" placeholder="35201-1234567-1"></div>
+    <input type="hidden" id="r-invite">
+    <button class="btn btn-primary" style="width:100%;padding:13px;margin-top:4px" onclick="doRegister()">Create Account →</button>
+    <div style="text-align:center;margin-top:14px;font-size:.83rem;color:var(--text3)">Already have account? <a href="#" onclick="showScreen('login')" style="color:var(--accent2)">Login</a></div>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD SCREEN -->
+<div id="forgot-screen" style="display:none;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(59,130,246,.15) 0%,transparent 60%),var(--bg)">
+  <div class="login-box">
+    <div class="login-logo"><h1>کمیٹی Pro</h1><p>FORGOT PASSWORD</p></div>
+    <div id="forgot-alert" class="alert" style="display:none"></div>
+    <p style="color:var(--text2);font-size:.875rem;margin-bottom:20px">Enter your registered email. We'll send a password reset link.</p>
+    <div class="form-group"><label class="lbl">Email Address</label><input id="f-email" type="email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doForgot()"></div>
+    <button class="btn btn-primary" style="width:100%;padding:13px" onclick="doForgot()">Send Reset Link →</button>
+    <div style="text-align:center;margin-top:14px;font-size:.83rem;color:var(--text3)"><a href="#" onclick="showScreen('login')" style="color:var(--accent2)">← Back to Login</a></div>
+  </div>
+</div>
+
+<!-- RESET PASSWORD SCREEN -->
+<div id="reset-screen" style="display:none;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(59,130,246,.15) 0%,transparent 60%),var(--bg)">
+  <div class="login-box">
+    <div class="login-logo"><h1>کمیٹی Pro</h1><p>RESET PASSWORD</p></div>
+    <div id="reset-alert" class="alert" style="display:none"></div>
+    <input type="hidden" id="reset-token">
+    <div class="form-group"><label class="lbl">New Password</label><input id="rp-pass" type="password" placeholder="Min 6 characters"></div>
+    <div class="form-group"><label class="lbl">Confirm Password</label><input id="rp-conf" type="password" placeholder="Repeat password" onkeydown="if(event.key==='Enter')doReset()"></div>
+    <button class="btn btn-primary" style="width:100%;padding:13px" onclick="doReset()">Reset Password →</button>
+  </div>
+</div>
+
+<!-- =================== APP =================== -->
+<div id="app">
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <h2>کمیٹی Pro</h2>
+          <p>COMMITTEE SYSTEM</p>
+        </div>
+        <div class="sidebar-user">
+          <div class="uname" id="sb-name">—</div>
+          <div class="urole" id="sb-role">—</div>
+        </div>
+      </div>
+      <nav class="nav" id="main-nav"><!-- rendered by JS --></nav>
+      <div class="sidebar-footer">
+        <button class="btn-logout" onclick="logout()">⏻ Logout</button>
+        <div style="text-align:center;font-size:.65rem;color:var(--text3);font-family:var(--font-m);margin-top:8px">v2.0 MEAN Stack</div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page">
+        <div class="pg-header">
+          <div><div class="pg-title">Dashboard</div><div class="pg-sub">SYSTEM OVERVIEW</div></div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span id="dash-time" style="font-family:var(--font-m);font-size:.75rem;color:var(--text3)"></span>
+          </div>
+        </div>
+        <div class="stats-grid" id="dash-stats"></div>
+        <div id="dash-quick" style="margin-top:20px"></div>
+      </div>
+
+      <!-- USERS (admin only) -->
+      <div id="page-users" class="page">
+        <div class="pg-header">
+          <div><div class="pg-title">Users</div><div class="pg-sub">MANAGE SYSTEM USERS</div></div>
+          <button class="btn btn-primary" onclick="openModal('user-modal')">+ Add User</button>
+        </div>
+        <div class="search-bar">
+          <input type="text" id="user-search" placeholder="Search by name or username..." oninput="renderUsers()">
+          <select id="user-role-filter" onchange="renderUsers()"><option value="">All Roles</option><option value="admin">Admin</option><option value="member">Member</option></select>
+        </div>
+        <div class="card"><div class="tbl-wrap">
+          <table><thead><tr><th>#</th><th>Name</th><th>Username</th><th>Role</th><th>Phone</th><th>CNIC</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="users-tbody"></tbody></table>
+        </div></div>
+      </div>
+
+      <!-- COMMITTEES -->
+      <div id="page-committees" class="page">
+        <div id="committee-list-view">
+          <div class="pg-header">
+            <div><div class="pg-title">Committees</div><div class="pg-sub">ALL COMMITTEES — کمیٹیاں</div></div>
+            <button class="btn btn-primary admin-only" onclick="openModal('committee-modal')">+ New Committee</button>
+          </div>
+          <div class="search-bar">
+            <input type="text" id="comm-search" placeholder="Search committee..." oninput="renderCommittees()">
+            <select id="comm-status-filter" onchange="renderCommittees()"><option value="">All Status</option><option value="active">Active</option><option value="paused">Paused</option><option value="completed">Completed</option></select>
+          </div>
+          <div class="c-grid" id="committee-grid"></div>
+        </div>
+
+        <div id="committee-detail-view" style="display:none" class="fade-in">
+          <button class="back-btn" onclick="showCommList()">← Back to Committees</button>
+          <div class="pg-header">
+            <div><div class="pg-title" id="det-name">—</div><div class="pg-sub" id="det-sub">—</div></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <span id="det-badge"></span>
+              <button class="btn btn-sm btn-success admin-only" onclick="exportCommitteeReport()">📄 Export Report</button>
+            </div>
+          </div>
+          <div class="stats-grid" id="det-stats"></div>
+          <div class="tabs">
+            <button class="tab-btn2 active" onclick="switchTab2('dt-members')">👥 Members & Turns</button>
+            <button class="tab-btn2" onclick="switchTab2('dt-payments')">💳 Payments</button>
+            <button class="tab-btn2" onclick="switchTab2('dt-payouts')">💰 Payouts</button>
+          </div>
+          <div id="dt-members" class="tab-content2 active card">
+            <div class="tbl-wrap"><table><thead><tr><th>Turn #</th><th>Member</th><th>Payout Month</th><th>Pool Amount</th><th>Status</th></tr></thead>
+            <tbody id="det-members-tbody"></tbody></table></div>
+          </div>
+          <div id="dt-payments" class="tab-content2">
+            <div class="search-bar" style="margin-bottom:14px">
+              <select id="pay-month-f" onchange="filterPay()" style="width:auto"><option value="">All Months</option>
+                <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+                <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+                <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+                <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+              </select>
+              <select id="pay-status-f" onchange="filterPay()" style="width:auto"><option value="">All Status</option><option value="paid">Paid</option><option value="pending">Pending</option></select>
+            </div>
+            <div class="card"><div class="tbl-wrap"><table>
+              <thead><tr><th>Member</th><th>Month/Year</th><th>Amount</th><th>Status</th><th>Paid On</th><th>Notes</th><th class="admin-only">Action</th></tr></thead>
+              <tbody id="det-pay-tbody"></tbody>
+            </table></div></div>
+          </div>
+          <div id="dt-payouts" class="tab-content2">
+            <div class="card"><div class="tbl-wrap"><table>
+              <thead><tr><th>Member</th><th>Turn Month</th><th>Total Pool</th><th>Status</th><th>Given On</th><th class="admin-only">Action</th></tr></thead>
+              <tbody id="det-pout-tbody"></tbody>
+            </table></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAYMENTS (global) -->
+      <div id="page-payments" class="page">
+        <div class="pg-header">
+          <div><div class="pg-title">Payments</div><div class="pg-sub">MONTHLY COLLECTION TRACKER</div></div>
+          <button class="btn btn-sm btn-outline" onclick="window.print()">🖨️ Print</button>
+        </div>
+        <div class="search-bar">
+          <input type="text" id="gpay-search" placeholder="Search member..." oninput="renderGlobalPayments()">
+          <select id="gpay-status" onchange="renderGlobalPayments()"><option value="">All Status</option><option value="paid">Paid</option><option value="pending">Pending</option></select>
+          <select id="gpay-comm" onchange="renderGlobalPayments()"><option value="">All Committees</option></select>
+        </div>
+        <div class="card"><div class="tbl-wrap">
+          <table><thead><tr><th>Committee</th><th>Member</th><th>Month</th><th>Year</th><th>Amount</th><th>Status</th><th>Paid On</th><th class="admin-only">Action</th></tr></thead>
+          <tbody id="gpay-tbody"></tbody></table>
+        </div></div>
+      </div>
+
+      <!-- PAYOUTS (global) -->
+      <div id="page-payouts" class="page">
+        <div class="pg-header">
+          <div><div class="pg-title">Payouts</div><div class="pg-sub">DISTRIBUTION TRACKER — وصولی</div></div>
+          <button class="btn btn-sm btn-outline" onclick="window.print()">🖨️ Print</button>
+        </div>
+        <div class="search-bar">
+          <input type="text" id="gpout-search" placeholder="Search member..." oninput="renderGlobalPayouts()">
+          <select id="gpout-status" onchange="renderGlobalPayouts()"><option value="">All Status</option><option value="given">Given</option><option value="pending">Pending</option></select>
+          <select id="gpout-comm" onchange="renderGlobalPayouts()"><option value="">All Committees</option></select>
+        </div>
+        <div class="card"><div class="tbl-wrap">
+          <table><thead><tr><th>Committee</th><th>Member</th><th>Turn Month</th><th>Turn Year</th><th>Pool Amount</th><th>Status</th><th>Given On</th><th class="admin-only">Action</th></tr></thead>
+          <tbody id="gpout-tbody"></tbody></table>
+        </div></div>
+      </div>
+
+      <!-- REPORTS (admin) -->
+      <div id="page-reports" class="page">
+        <div class="pg-header">
+          <div><div class="pg-title">Reports</div><div class="pg-sub">FINANCIAL SUMMARY</div></div>
+          <button class="btn btn-sm btn-outline" onclick="window.print()">🖨️ Print Report</button>
+        </div>
+        <div id="reports-container"></div>
+      </div>
+
+      <!-- PROFILE -->
+      <!-- INVITES -->
+      <div id="page-invites" class="page">
+        <div class="pg-header"><div><div class="pg-title">Invite Members</div><div class="pg-sub">SEND INVITATION EMAILS</div></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+          <div class="card"><div class="card-title">📧 Send Invite</div><div id="inv-alert" class="alert" style="display:none"></div><div class="form-group"><label class="lbl">Email *</label><input type="email" id="inv-email" placeholder="friend@example.com"></div><div class="form-group"><label class="lbl">Name (optional)</label><input type="text" id="inv-name" placeholder="Ahmad Ali"></div><button class="btn btn-primary" onclick="sendInvite()">Send Invitation →</button></div>
+          <div class="card"><div class="card-title">📋 Recent Invites</div><div id="invites-list"><div class="empty"><div class="empty-icon">📧</div><h3>No invites yet</h3></div></div></div>
+        </div>
+      </div>
+
+      <div id="page-profile" class="page">
+        <div class="pg-header"><div><div class="pg-title">My Profile</div><div class="pg-sub">ACCOUNT SETTINGS</div></div></div>
+        <div class="card" style="max-width:560px">
+          <div class="profile-header">
+            <div class="avatar" id="prof-avatar">👤</div>
+            <div><div id="prof-name" style="font-size:1.2rem;font-weight:700"></div><div id="prof-role" style="font-size:.72rem;color:var(--accent);font-family:var(--font-m);margin-top:4px"></div></div>
+          </div>
+          <div id="prof-info"></div>
+          <hr style="border:none;border-top:1px solid var(--border);margin:20px 0">
+          <div class="card-title">Change Password</div>
+          <div id="pw-alert"></div>
+          <div class="form-group"><label class="lbl">New Password</label><input type="password" id="new-pw" placeholder="Min 6 characters"></div>
+          <div class="form-group"><label class="lbl">Confirm Password</label><input type="password" id="conf-pw" placeholder="Repeat password"></div>
+          <button class="btn btn-primary" onclick="changePassword()">Update Password</button>
+        </div>
+      </div>
+
+    </div><!-- end main -->
+  </div><!-- end layout -->
+</div><!-- end app -->
+
+<!-- =================== MODALS =================== -->
+
+<!-- USER MODAL -->
+<div class="modal-overlay" id="user-modal">
+  <div class="modal">
+    <h2 id="user-modal-title">Add New User</h2>
+    <div id="user-alert"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="lbl">Full Name *</label><input type="text" id="u-name" placeholder="Ahmad Ali"></div>
+      <div class="form-group"><label class="lbl">Username *</label><input type="text" id="u-username" placeholder="ahmad_ali"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="lbl">Password *</label><input type="password" id="u-password" placeholder="••••••••"></div>
+      <div class="form-group"><label class="lbl">Role</label>
+        <select id="u-role"><option value="member">Member</option><option value="admin">Admin</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="lbl">Phone</label><input type="text" id="u-phone" placeholder="0301-1234567"></div>
+      <div class="form-group"><label class="lbl">CNIC</label><input type="text" id="u-cnic" placeholder="35201-1234567-1"></div>
+    </div>
+    <div class="form-group"><label class="lbl">Email</label><input type="email" id="u-email" placeholder="email@example.com"></div>
+    <div class="form-actions">
+      <button class="btn btn-outline" onclick="closeModal('user-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveUser()">Save User</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMMITTEE MODAL -->
+<div class="modal-overlay" id="committee-modal">
+  <div class="modal">
+    <h2>Create New Committee</h2>
+    <div id="comm-alert"></div>
+    <div class="form-group"><label class="lbl">Committee Name *</label><input type="text" id="c-name" placeholder="Family Committee 2025"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="lbl">Monthly Amount (PKR) *</label><input type="number" id="c-amount" placeholder="5000" min="1"></div>
+      <div class="form-group"><label class="lbl">Total Members *</label><input type="number" id="c-count" placeholder="10" min="2" max="24" onchange="genSlots()"></div>
+    </div>
+    <div class="form-group"><label class="lbl">Start Date *</label><input type="date" id="c-start"></div>
+    <div class="form-group">
+      <label class="lbl">Assign Members to Turn Numbers</label>
+      <small style="color:var(--text3);font-size:.75rem">Enter number of members above first</small>
+      <div class="slots-grid" id="slots-grid" style="margin-top:10px"></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-outline" onclick="closeModal('committee-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCommittee()">Create Committee</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT USER MODAL -->
+<div class="modal-overlay" id="edit-user-modal">
+  <div class="modal">
+    <h2>Edit User</h2>
+    <div id="eu-alert"></div>
+    <input type="hidden" id="eu-id">
+    <div class="form-row">
+      <div class="form-group"><label class="lbl">Full Name</label><input type="text" id="eu-name"></div>
+      <div class="form-group"><label class="lbl">Username</label><input type="text" id="eu-username"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="lbl">New Password (leave blank = no change)</label><input type="password" id="eu-password" placeholder="new password"></div>
+      <div class="form-group"><label class="lbl">Role</label><select id="eu-role"><option value="member">Member</option><option value="admin">Admin</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="lbl">Phone</label><input type="text" id="eu-phone"></div>
+      <div class="form-group"><label class="lbl">CNIC</label><input type="text" id="eu-cnic"></div>
+    </div>
+    <div class="form-group"><label class="lbl">Email</label><input type="email" id="eu-email"></div>
+    <div class="form-group"><label class="lbl">Status</label><select id="eu-active"><option value="true">Active</option><option value="false">Disabled</option></select></div>
+    <div class="form-actions">
+      <button class="btn btn-outline" onclick="closeModal('edit-user-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="updateUser()">Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTES MODAL (for marking payment paid) -->
+<div class="modal-overlay" id="pay-note-modal">
+  <div class="modal" style="width:380px">
+    <h2>Mark as Paid</h2>
+    <input type="hidden" id="pnm-id">
+    <div class="form-group"><label class="lbl">Notes (optional)</label><textarea id="pnm-notes" rows="3" placeholder="e.g. Cash received, JazzCash transfer..."></textarea></div>
+    <div class="form-actions">
+      <button class="btn btn-outline" onclick="closeModal('pay-note-modal')">Cancel</button>
+      <button class="btn btn-success" onclick="confirmMarkPaid()">✓ Confirm Paid</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const API = '';
+let TOKEN = localStorage.getItem('committee_token') || '';
+let ME = JSON.parse(localStorage.getItem('committee_me') || 'null');
+let allUsers = [], allComms = [], allPayments = [], allPayouts = [];
+let currentCommId = null;
+let detPayments = [], detPayouts = [];
+const MO = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// ============================================================
+// API HELPER
+// ============================================================
+async function req(method, path, body) {
+  try {
+    const opts = { method, headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN } };
+    if (body) opts.body = JSON.stringify(body);
+    const r = await fetch(API + path, opts);
+    const d = await r.json();
+    if (r.status === 401) { logout(); return null; }
+    return d;
+  } catch(e) { console.warn('API:', e.message); return null; }
+}
+
+function pkr(n) { return 'PKR ' + (n||0).toLocaleString('en-PK'); }
+
+// ============================================================
+// LOGIN
+// ============================================================
+function loginTab(t) {
+  document.querySelectorAll('.login-box .tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&t==='admin')||(i===1&&t==='member')));
+  document.getElementById('login-admin').classList.toggle('active', t==='admin');
+  document.getElementById('login-member').classList.toggle('active', t==='member');
+}
+
+async function doLogin() {
+  const u = document.getElementById('l-user').value.trim();
+  const p = document.getElementById('l-pass').value;
+  const err = document.getElementById('login-err');
+  err.style.display = 'none';
+  if (!u || !p) { err.textContent = 'Enter username & password'; err.style.display = ''; return; }
+  const res = await fetch(API + '/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) }).catch(() => null);
+  if (!res) { err.textContent = 'Server not reachable. Run: node server.js'; err.style.display = ''; return; }
+  const d = await res.json();
+  if (!d.token) { err.textContent = d.error || 'Invalid credentials'; err.style.display = ''; return; }
+  TOKEN = d.token; ME = d.user;
+  localStorage.setItem('committee_token', TOKEN);
+  localStorage.setItem('committee_me', JSON.stringify(ME));
+  startApp();
+}
+
+async function doLogin2() {
+  const u = document.getElementById('l-user2').value.trim();
+  const p = document.getElementById('l-pass2').value;
+  const err = document.getElementById('login-err2');
+  err.style.display = 'none';
+  if (!u || !p) { err.textContent = 'Enter username & password'; err.style.display = ''; return; }
+  const res = await fetch(API + '/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) }).catch(() => null);
+  if (!res) { err.textContent = 'Server not reachable'; err.style.display = ''; return; }
+  const d = await res.json();
+  if (!d.token) { err.textContent = d.error || 'Invalid credentials'; err.style.display = ''; return; }
+  TOKEN = d.token; ME = d.user;
+  localStorage.setItem('committee_token', TOKEN);
+  localStorage.setItem('committee_me', JSON.stringify(ME));
+  startApp();
+}
+
+function logout() {
+  TOKEN = ''; ME = null;
+  localStorage.removeItem('committee_token');
+  localStorage.removeItem('committee_me');
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+// ============================================================
+// APP INIT
+// ============================================================
+function startApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = '';
+  document.getElementById('sb-name').textContent = ME?.name || '—';
+  document.getElementById('sb-role').textContent = (ME?.role || 'member').toUpperCase();
+  buildNav();
+  applyRoleUI();
+  navigate('dashboard');
+}
+
+function buildNav() {
+  const isAdmin = ME?.role === 'admin';
+  const nav = [
+    { id: 'dashboard', icon: '📊', label: 'Dashboard' },
+    isAdmin ? { id: 'users', icon: '👥', label: 'Users', section: 'ADMIN PANEL' } : null,
+    { id: 'committees', icon: '🏦', label: 'Committees', section: isAdmin ? null : 'MY COMMITTEES' },
+    { id: 'payments', icon: '💳', label: 'Payments' },
+    { id: 'payouts', icon: '💰', label: 'Payouts' },
+    isAdmin ? { id: 'reports', icon: '📈', label: 'Reports' } : null,
+    { id: 'profile', icon: '⚙️', label: 'Profile', section: 'ACCOUNT' },
+  ].filter(Boolean);
+
+  let html = '';
+  nav.forEach(n => {
+    if (n.section) html += `<div class="nav-section">${n.section}</div>`;
+    html += `<button class="nav-item" id="nav-${n.id}" onclick="navigate('${n.id}')"><span class="ni">${n.icon}</span>${n.label}</button>`;
+  });
+  document.getElementById('main-nav').innerHTML = html;
+}
+
+function applyRoleUI() {
+  const isAdmin = ME?.role === 'admin';
+  document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? '' : 'none');
+  if (!isAdmin) {
+    document.querySelectorAll('th.admin-only, td.admin-only').forEach(el => el.style.display = 'none');
+  }
+}
+
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page)?.classList.add('active');
+  document.getElementById('nav-' + page)?.classList.add('active');
+  const handlers = { dashboard: loadDash, users: loadUsers, committees: loadComms, payments: loadGlobalPay, payouts: loadGlobalPout, reports: loadReports, profile: loadProfile };
+  handlers[page]?.();
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+async function loadDash() {
+  const data = await req('GET', '/api/dashboard');
+  const isAdmin = ME?.role === 'admin';
+  const d = data || {};
+
+  const now = new Date();
+  document.getElementById('dash-time').textContent = now.toLocaleDateString('en-PK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  const stats = isAdmin ? [
+    { label: 'Total Users', val: d.totalUsers ?? '—', cls: 'blue', bar: 'blue', sub: 'Registered users' },
+    { label: 'Committees', val: d.totalCommittees ?? '—', cls: 'purple', bar: 'purple', sub: 'All committees' },
+    { label: 'Active', val: d.activeCommittees ?? '—', cls: 'green', bar: 'green', sub: 'Running now' },
+    { label: 'Total Collected', val: d.totalCollected ? pkr(d.totalCollected) : '—', cls: 'gold', bar: 'gold', sub: 'All paid payments' },
+    { label: 'Pending Payments', val: d.pendingPayments ?? '—', cls: 'red', bar: 'red', sub: 'Awaiting collection' },
+    { label: 'Pending Payouts', val: d.pendingPayouts ?? '—', cls: 'red', bar: 'red', sub: 'To be distributed' },
+  ] : [
+    { label: 'My Committees', val: d.totalCommittees ?? '—', cls: 'blue', bar: 'blue', sub: 'Enrolled in' },
+    { label: 'Active', val: d.activeCommittees ?? '—', cls: 'green', bar: 'green', sub: 'Running now' },
+    { label: 'Paid Payments', val: d.paidPayments ?? '—', cls: 'gold', bar: 'gold', sub: 'On time' },
+    { label: 'Pending', val: d.pendingPayments ?? '—', cls: 'red', bar: 'red', sub: 'Due this month' },
+    { label: 'Payouts Received', val: d.givenPayouts ?? '—', cls: 'purple', bar: 'purple', sub: 'Collected so far' },
+    { label: 'Upcoming Payouts', val: d.pendingPayouts ?? '—', cls: 'gold', bar: 'gold', sub: 'Waiting for turn' },
+  ];
+
+  document.getElementById('dash-stats').innerHTML = stats.map(s => `
+    <div class="stat"><div class="stat-bar ${s.bar}"></div>
+    <div class="stat-label">${s.label}</div>
+    <div class="stat-value ${s.cls}">${s.val}</div>
+    <div class="stat-sub">${s.sub}</div></div>
+  `).join('');
+
+  document.getElementById('dash-quick').innerHTML = `
+    <div class="card" style="background:var(--card2)">
+      <div class="card-title">📋 Quick Guide — Committee System</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px">
+        ${[
+          isAdmin?['1️⃣','Add Users','Create member accounts with login credentials']:'',
+          ['2️⃣','Create Committee','Set amount, members, and turn order'],
+          ['3️⃣','Collect Monthly','Mark payments paid each month'],
+          ['4️⃣','Distribute Payout','Give the pool to the turn member'],
+        ].filter(Boolean).map(s => `<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px"><div style="font-size:1.4rem;margin-bottom:8px">${s[0]}</div><div style="font-weight:600;font-size:.875rem;margin-bottom:4px">${s[1]}</div><div style="font-size:.78rem;color:var(--text3)">${s[2]}</div></div>`).join('')}
+      </div>
+    </div>`;
+}
+
+// ============================================================
+// USERS
+// ============================================================
+async function loadUsers() {
+  const data = await req('GET', '/api/users');
+  allUsers = data || [];
+  renderUsers();
+}
+
+function renderUsers() {
+  const search = document.getElementById('user-search')?.value?.toLowerCase() || '';
+  const roleF = document.getElementById('user-role-filter')?.value || '';
+  let filtered = allUsers.filter(u =>
+    (!search || u.name.toLowerCase().includes(search) || u.username.toLowerCase().includes(search)) &&
+    (!roleF || u.role === roleF)
+  );
+  const tbody = document.getElementById('users-tbody');
+  if (!filtered.length) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><div class="empty-icon">👥</div><h3>No users found</h3></div></td></tr>`; return; }
+  tbody.innerHTML = filtered.map((u, i) => `
+    <tr>
+      <td><span class="badge b-blue">${i+1}</span></td>
+      <td><strong>${u.name}</strong></td>
+      <td style="font-family:var(--font-m);font-size:.8rem">${u.username}</td>
+      <td><span class="badge ${u.role==='admin'?'b-purple':'b-blue'}">${u.role.toUpperCase()}</span></td>
+      <td style="font-size:.83rem;color:var(--text2)">${u.phone||'—'}</td>
+      <td style="font-size:.78rem;color:var(--text3);font-family:var(--font-m)">${u.cnic||'—'}</td>
+      <td><span class="badge ${u.active!==false?'b-green':'b-red'}">${u.active!==false?'ACTIVE':'DISABLED'}</span></td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="openEditUser('${u._id}')">Edit</button>
+        ${u.username!=='admin'?`<button class="btn btn-sm btn-danger" onclick="deleteUser('${u._id}')">Remove</button>`:''}
+      </td>
+    </tr>`).join('');
+}
+
+async function saveUser() {
+  const name = document.getElementById('u-name').value.trim();
+  const username = document.getElementById('u-username').value.trim();
+  const password = document.getElementById('u-password').value;
+  const alert = document.getElementById('user-alert');
+  if (!name || !username || !password) { alert.className='alert alert-err'; alert.textContent='Name, username & password required!'; return; }
+  const res = await req('POST', '/api/users', { name, username, password, role: document.getElementById('u-role').value, phone: document.getElementById('u-phone').value, cnic: document.getElementById('u-cnic').value, email: document.getElementById('u-email').value });
+  if (res?.error) { alert.className='alert alert-err'; alert.textContent=res.error; return; }
+  if (res?._id) allUsers.unshift(res);
+  renderUsers();
+  closeModal('user-modal');
+}
+
+function openEditUser(id) {
+  const u = allUsers.find(x => x._id === id);
+  if (!u) return;
+  document.getElementById('eu-id').value = id;
+  document.getElementById('eu-name').value = u.name;
+  document.getElementById('eu-username').value = u.username;
+  document.getElementById('eu-password').value = '';
+  document.getElementById('eu-role').value = u.role;
+  document.getElementById('eu-phone').value = u.phone || '';
+  document.getElementById('eu-cnic').value = u.cnic || '';
+  document.getElementById('eu-email').value = u.email || '';
+  document.getElementById('eu-active').value = String(u.active !== false);
+  document.getElementById('eu-alert').innerHTML = '';
+  openModal('edit-user-modal');
+}
+
+async function updateUser() {
+  const id = document.getElementById('eu-id').value;
+  const body = { name: document.getElementById('eu-name').value, username: document.getElementById('eu-username').value, role: document.getElementById('eu-role').value, phone: document.getElementById('eu-phone').value, cnic: document.getElementById('eu-cnic').value, email: document.getElementById('eu-email').value, active: document.getElementById('eu-active').value === 'true' };
+  const pw = document.getElementById('eu-password').value;
+  if (pw) body.password = pw;
+  const res = await req('PUT', '/api/users/' + id, body);
+  if (res?.error) { document.getElementById('eu-alert').innerHTML = `<div class="alert alert-err">${res.error}</div>`; return; }
+  if (res?._id) { const idx = allUsers.findIndex(u => u._id === id); if (idx >= 0) allUsers[idx] = res; }
+  renderUsers();
+  closeModal('edit-user-modal');
+}
+
+async function deleteUser(id) {
+  if (!confirm('Disable this user? They will not be able to login.')) return;
+  await req('DELETE', '/api/users/' + id);
+  const u = allUsers.find(x => x._id === id);
+  if (u) u.active = false;
+  renderUsers();
+}
+
+// ============================================================
+// COMMITTEES
+// ============================================================
+async function loadComms() {
+  const data = await req('GET', '/api/committees');
+  allComms = data || [];
+  renderCommittees();
+  showCommList();
+}
+
+function renderCommittees() {
+  const search = document.getElementById('comm-search')?.value?.toLowerCase() || '';
+  const statusF = document.getElementById('comm-status-filter')?.value || '';
+  let filtered = allComms.filter(c =>
+    (!search || c.name.toLowerCase().includes(search)) &&
+    (!statusF || c.status === statusF)
+  );
+  const grid = document.getElementById('committee-grid');
+  if (!filtered.length) { grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🏦</div><h3>No committees found</h3></div>`; return; }
+  grid.innerHTML = filtered.map(c => {
+    const taken = c.members.filter(m => m.hasTaken).length;
+    const pct = Math.round((taken / c.totalMembers) * 100);
+    const pool = c.monthlyAmount * c.totalMembers;
+    const sBadge = { active: 'b-green', completed: 'b-blue', paused: 'b-gold' }[c.status] || 'b-gold';
+    return `<div class="c-card" onclick="openCommDetail('${c._id}')">
+      <div style="display:flex;justify-content:space-between;align-items:start">
+        <h3>${c.name}</h3>
+        <span class="badge ${sBadge}">${c.status.toUpperCase()}</span>
+      </div>
+      <div class="c-meta">
+        <div class="c-pill">👥 <span>${c.totalMembers}</span> members</div>
+        <div class="c-pill">💰 <span>${pkr(c.monthlyAmount)}</span>/mo</div>
+        <div class="c-pill">Pool <span>${pkr(pool)}</span></div>
+        <div class="c-pill">📅 <span>${new Date(c.startDate).toLocaleDateString('en-PK',{month:'short',year:'numeric'})}</span></div>
+      </div>
+      <div class="prog-wrap">
+        <div class="prog-lbl"><span>Payouts given</span><span>${taken}/${c.totalMembers}</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showCommList() {
+  document.getElementById('committee-list-view').style.display = '';
+  document.getElementById('committee-detail-view').style.display = 'none';
+  currentCommId = null;
+}
+
+async function openCommDetail(id) {
+  currentCommId = id;
+  const c = allComms.find(x => x._id === id);
+  if (!c) return;
+  document.getElementById('committee-list-view').style.display = 'none';
+  document.getElementById('committee-detail-view').style.display = '';
+
+  const sBadge = { active: 'b-green', completed: 'b-blue', paused: 'b-gold' }[c.status] || 'b-gold';
+  const pool = c.monthlyAmount * c.totalMembers;
+  const taken = c.members.filter(m => m.hasTaken).length;
+  document.getElementById('det-name').textContent = c.name;
+  document.getElementById('det-sub').textContent = `Started: ${new Date(c.startDate).toLocaleDateString()} · ${c.totalMembers} Members`;
+  document.getElementById('det-badge').innerHTML = `<span class="badge ${sBadge}">${c.status.toUpperCase()}</span>`;
+
+  document.getElementById('det-stats').innerHTML = [
+    { l:'Monthly/Member', v: pkr(c.monthlyAmount), cls:'gold', bar:'gold', s:'Per member per month' },
+    { l:'Pool Amount', v: pkr(pool), cls:'green', bar:'green', s:'Each member receives' },
+    { l:'Duration', v: c.totalMembers + ' Months', cls:'blue', bar:'blue', s:'Total committee life' },
+    { l:'Paid Out', v: `${taken}/${c.totalMembers}`, cls:'purple', bar:'purple', s:'Members received' },
+  ].map(s => `<div class="stat"><div class="stat-bar ${s.bar}"></div><div class="stat-label">${s.l}</div><div class="stat-value ${s.cls}" style="font-size:1.3rem">${s.v}</div><div class="stat-sub">${s.s}</div></div>`).join('');
+
+  // Members tab
+  const start = new Date(c.startDate);
+  document.getElementById('det-members-tbody').innerHTML = c.members.sort((a,b)=>a.turnMonth-b.turnMonth).map(m => {
+    const d = new Date(start); d.setMonth(d.getMonth() + (m.turnMonth - 1));
+    return `<tr>
+      <td><span class="badge b-blue">${m.turnMonth}</span></td>
+      <td><strong>${m.name}</strong></td>
+      <td style="font-family:var(--font-m)">${MO[d.getMonth()+1]} ${d.getFullYear()}</td>
+      <td class="amount-cell">${pkr(pool)}</td>
+      <td>${m.hasTaken ? '<span class="badge b-green">RECEIVED ✓</span>' : '<span class="badge b-gold">WAITING</span>'}</td>
+    </tr>`;
+  }).join('');
+
+  await loadDetPayments(id);
+  await loadDetPayouts(id);
+  switchTab2('dt-members');
+}
+
+async function loadDetPayments(cid) {
+  const data = await req('GET', '/api/payments?committeeId=' + cid);
+  // Only show payments for members actually in this committee
+  const c = allComms.find(x => x._id === cid);
+  const memberIds = c ? c.members.map(m => String(m.userId)) : [];
+  detPayments = (data || []).filter(p => !memberIds.length || memberIds.includes(String(p.userId)));
+  filterPay();
+}
+
+function filterPay() {
+  const mF = document.getElementById('pay-month-f')?.value || '';
+  const sF = document.getElementById('pay-status-f')?.value || '';
+  const isAdmin = ME?.role === 'admin';
+  let filtered = detPayments;
+  if (mF) filtered = filtered.filter(p => String(p.month) === mF);
+  if (sF) filtered = filtered.filter(p => p.status === sF);
+  document.getElementById('det-pay-tbody').innerHTML = filtered.length ? filtered.map(p => `
+    <tr>
+      <td><strong>${p.memberName}</strong></td>
+      <td style="font-family:var(--font-m)">${MO[p.month]} ${p.year}</td>
+      <td class="amount-cell">${pkr(p.amount)}</td>
+      <td>${p.status==='paid'?'<span class="badge b-green">PAID</span>':'<span class="badge b-gold">PENDING</span>'}</td>
+      <td style="font-size:.8rem;color:var(--text3)">${p.paidDate?new Date(p.paidDate).toLocaleDateString():'—'}</td>
+      <td style="font-size:.78rem;color:var(--text3)">${p.notes||'—'}</td>
+      ${isAdmin?`<td>${p.status==='pending'?`<button class="btn btn-sm btn-success" onclick="openPayNote('${p._id}')">Mark Paid</button>`:`<button class="btn btn-sm btn-danger" onclick="markPending('${p._id}')">Undo</button>`}</td>`:''}
+    </tr>`).join('') : `<tr><td colspan="7"><div class="empty"><div class="empty-icon">💳</div><h3>No payments match filter</h3></div></td></tr>`;
+}
+
+async function loadDetPayouts(cid) {
+  const data = await req('GET', '/api/payouts?committeeId=' + cid);
+  const c = allComms.find(x => x._id === cid);
+  const memberIds = c ? c.members.map(m => String(m.userId)) : [];
+  detPayouts = (data || []).filter(p => !memberIds.length || memberIds.includes(String(p.userId)));
+  renderDetPayouts();
+}
+
+function renderDetPayouts() {
+  const isAdmin = ME?.role === 'admin';
+  document.getElementById('det-pout-tbody').innerHTML = detPayouts.length ? detPayouts.map(p => `
+    <tr>
+      <td><strong>${p.memberName}</strong></td>
+      <td style="font-family:var(--font-m)">${MO[p.turnMonth]} ${p.turnYear}</td>
+      <td class="amount-cell">${pkr(p.totalAmount)}</td>
+      <td>${p.status==='given'?'<span class="badge b-green">GIVEN ✓</span>':'<span class="badge b-gold">PENDING</span>'}</td>
+      <td style="font-size:.8rem;color:var(--text3)">${p.givenDate?new Date(p.givenDate).toLocaleDateString():'—'}</td>
+      ${isAdmin?`<td>${p.status==='pending'?`<button class="btn btn-sm btn-primary" onclick="markPayoutGiven('${p._id}')">Mark Given</button>`:'<span style="color:var(--text3);font-size:.8rem">✓ Done</span>'}</td>`:''}
+    </tr>`).join('') : `<tr><td colspan="6"><div class="empty"><div class="empty-icon">💰</div><h3>No payouts yet</h3></div></td></tr>`;
+}
+
+// Committee create
+function genSlots() {
+  const count = parseInt(document.getElementById('c-count').value) || 0;
+  const container = document.getElementById('slots-grid');
+  if (!count || count < 2) { container.innerHTML = ''; return; }
+  const opts = allUsers.map(u => `<option value="${u._id}" data-name="${u.name}">${u.name} (${u.username})</option>`).join('');
+  container.innerHTML = Array.from({ length: count }, (_, i) => `
+    <div class="slot"><div class="slot-num">TURN ${i+1}</div>
+    <select id="slot-${i+1}"><option value="">— Select Member —</option>${opts}</select></div>`).join('');
+}
+
+async function saveCommittee() {
+  const name = document.getElementById('c-name').value.trim();
+  const amount = parseFloat(document.getElementById('c-amount').value);
+  const count = parseInt(document.getElementById('c-count').value);
+  const startDate = document.getElementById('c-start').value;
+  const alert = document.getElementById('comm-alert');
+  if (!name || !amount || !count || !startDate) { alert.className='alert alert-err'; alert.textContent='All fields required!'; return; }
+
+  const members = [];
+  for (let i = 1; i <= count; i++) {
+    const sel = document.getElementById('slot-' + i);
+    if (!sel?.value) { alert.className='alert alert-err'; alert.textContent=`Select member for Turn ${i}`; return; }
+    const opt = sel.options[sel.selectedIndex];
+    members.push({ userId: sel.value, name: opt.dataset.name, turnMonth: i, hasTaken: false });
+  }
+
+  const res = await req('POST', '/api/committees', { name, monthlyAmount: amount, totalMembers: count, startDate, members });
+  if (res?.error) { alert.className='alert alert-err'; alert.textContent=res.error; return; }
+  if (res?._id) allComms.unshift(res);
+  renderCommittees();
+  closeModal('committee-modal');
+}
+
+// ============================================================
+// PAYMENTS - GLOBAL
+// ============================================================
+async function loadGlobalPay() {
+  const data = await req('GET', '/api/payments');
+  allPayments = data || [];
+  // populate committee filter
+  const commSel = document.getElementById('gpay-comm');
+  commSel.innerHTML = '<option value="">All Committees</option>' + allComms.map(c => `<option value="${c._id}">${c.name}</option>`).join('');
+  renderGlobalPayments();
+}
+
+function renderGlobalPayments() {
+  const search = document.getElementById('gpay-search')?.value?.toLowerCase() || '';
+  const statusF = document.getElementById('gpay-status')?.value || '';
+  const commF = document.getElementById('gpay-comm')?.value || '';
+  const isAdmin = ME?.role === 'admin';
+  let filtered = allPayments.filter(p =>
+    (!search || p.memberName?.toLowerCase().includes(search)) &&
+    (!statusF || p.status === statusF) &&
+    (!commF || String(p.committeeId) === commF)
+  );
+  const tbody = document.getElementById('gpay-tbody');
+  if (!filtered.length) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><div class="empty-icon">💳</div><h3>No payments found</h3></div></td></tr>`; return; }
+  tbody.innerHTML = filtered.map(p => `
+    <tr>
+      <td style="font-size:.8rem;color:var(--text2)">${p.committeeName||'—'}</td>
+      <td><strong>${p.memberName}</strong></td>
+      <td style="font-family:var(--font-m)">${MO[p.month]}</td>
+      <td style="font-family:var(--font-m)">${p.year}</td>
+      <td class="amount-cell">${pkr(p.amount)}</td>
+      <td>${p.status==='paid'?'<span class="badge b-green">PAID</span>':'<span class="badge b-gold">PENDING</span>'}</td>
+      <td style="font-size:.8rem;color:var(--text3)">${p.paidDate?new Date(p.paidDate).toLocaleDateString():'—'}</td>
+      ${isAdmin?`<td>${p.status==='pending'?`<button class="btn btn-sm btn-success" onclick="openPayNote('${p._id}',true)">Mark Paid</button>`:`<button class="btn btn-sm btn-danger" onclick="markPending('${p._id}',true)">Undo</button>`}</td>`:''}
+    </tr>`).join('');
+}
+
+// ============================================================
+// PAYOUTS - GLOBAL
+// ============================================================
+async function loadGlobalPout() {
+  const data = await req('GET', '/api/payouts');
+  allPayouts = data || [];
+  const commSel = document.getElementById('gpout-comm');
+  commSel.innerHTML = '<option value="">All Committees</option>' + allComms.map(c => `<option value="${c._id}">${c.name}</option>`).join('');
+  renderGlobalPayouts();
+}
+
+function renderGlobalPayouts() {
+  const search = document.getElementById('gpout-search')?.value?.toLowerCase() || '';
+  const statusF = document.getElementById('gpout-status')?.value || '';
+  const commF = document.getElementById('gpout-comm')?.value || '';
+  const isAdmin = ME?.role === 'admin';
+  let filtered = allPayouts.filter(p =>
+    (!search || p.memberName?.toLowerCase().includes(search)) &&
+    (!statusF || p.status === statusF) &&
+    (!commF || String(p.committeeId) === commF)
+  );
+  const tbody = document.getElementById('gpout-tbody');
+  if (!filtered.length) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><div class="empty-icon">💰</div><h3>No payouts found</h3></div></td></tr>`; return; }
+  tbody.innerHTML = filtered.map(p => `
+    <tr>
+      <td style="font-size:.8rem;color:var(--text2)">${p.committeeName||'—'}</td>
+      <td><strong>${p.memberName}</strong></td>
+      <td style="font-family:var(--font-m)">${MO[p.turnMonth]}</td>
+      <td style="font-family:var(--font-m)">${p.turnYear}</td>
+      <td class="amount-cell">${pkr(p.totalAmount)}</td>
+      <td>${p.status==='given'?'<span class="badge b-green">GIVEN ✓</span>':'<span class="badge b-gold">PENDING</span>'}</td>
+      <td style="font-size:.8rem;color:var(--text3)">${p.givenDate?new Date(p.givenDate).toLocaleDateString():'—'}</td>
+      ${isAdmin?`<td>${p.status==='pending'?`<button class="btn btn-sm btn-primary" onclick="markPayoutGivenGlobal('${p._id}')">Mark Given</button>`:'✓'}</td>`:''}
+    </tr>`).join('');
+}
+
+// ============================================================
+// PAYMENT ACTIONS
+// ============================================================
+let _payNoteGlobal = false;
+function openPayNote(id, global=false) {
+  _payNoteGlobal = global;
+  document.getElementById('pnm-id').value = id;
+  document.getElementById('pnm-notes').value = '';
+  openModal('pay-note-modal');
+}
+
+async function confirmMarkPaid() {
+  const id = document.getElementById('pnm-id').value;
+  const notes = document.getElementById('pnm-notes').value;
+  const res = await req('PUT', '/api/payments/' + id + '/mark-paid', { notes });
+  if (res?._id) {
+    // update local arrays
+    [allPayments, detPayments].forEach(arr => { const p = arr.find(x => x._id === id); if (p) { p.status = 'paid'; p.paidDate = new Date(); p.notes = notes; } });
+  }
+  closeModal('pay-note-modal');
+  if (_payNoteGlobal) renderGlobalPayments(); else filterPay();
+}
+
+async function markPending(id, global=false) {
+  if (!confirm('Undo this payment?')) return;
+  const res = await req('PUT', '/api/payments/' + id + '/mark-pending', {});
+  if (res?._id) {
+    [allPayments, detPayments].forEach(arr => { const p = arr.find(x => x._id === id); if (p) { p.status = 'pending'; p.paidDate = null; } });
+  }
+  if (global) renderGlobalPayments(); else filterPay();
+}
+
+async function markPayoutGiven(id) {
+  if (!confirm('Mark this payout as given?')) return;
+  const res = await req('PUT', '/api/payouts/' + id + '/mark-given', {});
+  if (res?._id) {
+    const p = detPayouts.find(x => x._id === id);
+    if (p) { p.status = 'given'; p.givenDate = new Date(); }
+    // update committee member
+    if (currentCommId) {
+      const c = allComms.find(x => x._id === currentCommId);
+      if (c) { const m = c.members.find(x => String(x.userId) === String(res.userId)); if (m) m.hasTaken = true; }
+    }
+  }
+  renderDetPayouts();
+}
+
+async function markPayoutGivenGlobal(id) {
+  if (!confirm('Mark this payout as given?')) return;
+  const res = await req('PUT', '/api/payouts/' + id + '/mark-given', {});
+  if (res?._id) {
+    const p = allPayouts.find(x => x._id === id);
+    if (p) { p.status = 'given'; p.givenDate = new Date(); }
+  }
+  renderGlobalPayouts();
+}
+
+// ============================================================
+// REPORTS
+// ============================================================
+async function loadReports() {
+  const data = await req('GET', '/api/reports/summary');
+  if (!data) { document.getElementById('reports-container').innerHTML = '<div class="empty"><div class="empty-icon">📈</div><h3>No data</h3></div>'; return; }
+  document.getElementById('reports-container').innerHTML = data.map(r => `
+    <div class="report-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h4>🏦 ${r.name}</h4>
+        <span class="badge ${r.status==='active'?'b-green':r.status==='completed'?'b-blue':'b-gold'}">${r.status?.toUpperCase()}</span>
+      </div>
+      <div class="report-row"><span class="lv">Members</span><span class="rv blue">${r.totalMembers}</span></div>
+      <div class="report-row"><span class="lv">Monthly Contribution</span><span class="rv">${pkr(r.monthlyAmount)}</span></div>
+      <div class="report-row"><span class="lv">Total Pool per Turn</span><span class="rv">${pkr(r.totalPool)}</span></div>
+      <div class="report-row"><span class="lv">Total Collected (Paid)</span><span class="rv green">${pkr(r.collected)}</span></div>
+      <div class="report-row"><span class="lv">Still Pending</span><span class="rv red">${pkr(r.pending)}</span></div>
+      <div class="report-row"><span class="lv">Distributed to Members</span><span class="rv green">${pkr(r.distributed)}</span></div>
+      <div class="report-row"><span class="lv">Start Date</span><span class="rv blue">${new Date(r.startDate).toLocaleDateString()}</span></div>
+    </div>`).join('') || '<div class="empty"><div class="empty-icon">📈</div><h3>No committees yet</h3></div>';
+}
+
+function exportCommitteeReport() { window.print(); }
+
+// ============================================================
+// PROFILE
+// ============================================================
+async function loadProfile() {
+  const user = await req('GET', '/api/auth/me');
+  if (!user) return;
+  document.getElementById('prof-avatar').textContent = user.role === 'admin' ? '🛡️' : '👤';
+  document.getElementById('prof-name').textContent = user.name;
+  document.getElementById('prof-role').textContent = user.role.toUpperCase();
+  document.getElementById('prof-info').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      ${[['Username', user.username],['Phone', user.phone||'—'],['CNIC', user.cnic||'—'],['Email', user.email||'—']].map(([l,v])=>`
+        <div><div style="font-size:.68rem;color:var(--text3);font-family:var(--font-m);letter-spacing:1px;margin-bottom:4px">${l.toUpperCase()}</div>
+        <div style="font-size:.9rem">${v}</div></div>`).join('')}
+    </div>`;
+  document.getElementById('pw-alert').innerHTML = '';
+}
+
+async function changePassword() {
+  const np = document.getElementById('new-pw').value;
+  const cp = document.getElementById('conf-pw').value;
+  const alert = document.getElementById('pw-alert');
+  if (!np || np.length < 6) { alert.innerHTML = '<div class="alert alert-err">Password must be at least 6 characters</div>'; return; }
+  if (np !== cp) { alert.innerHTML = '<div class="alert alert-err">Passwords do not match</div>'; return; }
+  const res = await req('PUT', '/api/users/' + ME.id, { password: np });
+  if (res?.error) { alert.innerHTML = `<div class="alert alert-err">${res.error}</div>`; return; }
+  alert.innerHTML = '<div class="alert alert-ok">✓ Password updated successfully</div>';
+  document.getElementById('new-pw').value = '';
+  document.getElementById('conf-pw').value = '';
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function switchTab2(id) {
+  document.querySelectorAll('.tab-content2').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn2').forEach(b => b.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  document.querySelectorAll('.tab-btn2').forEach(b => { if (b.getAttribute('onclick')?.includes(id)) b.classList.add('active'); });
+}
+
+// ============================================================
+// MODALS
+// ============================================================
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  if (id === 'user-modal') { ['u-name','u-username','u-password','u-phone','u-cnic','u-email'].forEach(x => { const el = document.getElementById(x); if (el) el.value = ''; }); document.getElementById('u-role').value = 'member'; document.getElementById('user-alert').innerHTML = ''; }
+  if (id === 'committee-modal') { ['c-name','c-amount','c-count'].forEach(x => { const el = document.getElementById(x); if (el) el.value = ''; }); document.getElementById('c-start').value = new Date().toISOString().split('T')[0]; document.getElementById('slots-grid').innerHTML = ''; document.getElementById('comm-alert').innerHTML = ''; if (!allUsers.length) loadUsers(); }
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+
+
+// ============================================================
+// SCREEN MANAGEMENT
+// ============================================================
+const SCREENS = ['login-screen','register-screen','forgot-screen','reset-screen'];
+function showScreen(name) {
+  SCREENS.forEach(s => { const el = document.getElementById(s); if(el) el.style.display='none'; });
+  const map = { login:'login-screen', register:'register-screen', forgot:'forgot-screen', reset:'reset-screen' };
+  const el = document.getElementById(map[name]||map.login);
+  if(el) el.style.display='flex';
+}
+
+async function doRegister() {
+  const name = document.getElementById('r-name').value.trim();
+  const username = document.getElementById('r-username').value.trim();
+  const email = document.getElementById('r-email').value.trim();
+  const password = document.getElementById('r-pass').value;
+  const phone = document.getElementById('r-phone').value.trim();
+  const cnic = document.getElementById('r-cnic').value.trim();
+  const inviteToken = document.getElementById('r-invite').value;
+  const al = document.getElementById('reg-alert');
+  al.style.display='none';
+  if (!name||!username||!email||!password){al.className='alert alert-err';al.textContent='All starred fields required!';al.style.display='';return;}
+  if (password.length<6){al.className='alert alert-err';al.textContent='Password min 6 chars';al.style.display='';return;}
+  const res = await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,username,email,password,phone,cnic,inviteToken})}).catch(()=>null);
+  const d = res?await res.json():{};
+  if(d.error){al.className='alert alert-err';al.textContent=d.error;al.style.display='';return;}
+  al.className='alert alert-ok';al.textContent='Account created! Check email to verify, then login.';al.style.display='';
+  setTimeout(()=>showScreen('login'),3000);
+}
+
+async function doForgot() {
+  const email = document.getElementById('f-email').value.trim();
+  const al = document.getElementById('forgot-alert');
+  al.style.display='none';
+  if(!email){al.className='alert alert-err';al.textContent='Enter your email';al.style.display='';return;}
+  const res = await fetch('/api/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})}).catch(()=>null);
+  const d = res?await res.json():{};
+  al.className='alert alert-ok';al.textContent='Reset link sent! Check your email.';al.style.display='';
+}
+
+async function doReset() {
+  const token = document.getElementById('reset-token').value;
+  const password = document.getElementById('rp-pass').value;
+  const conf = document.getElementById('rp-conf').value;
+  const al = document.getElementById('reset-alert');
+  al.style.display='none';
+  if(password!==conf){al.className='alert alert-err';al.textContent='Passwords do not match';al.style.display='';return;}
+  if(password.length<6){al.className='alert alert-err';al.textContent='Min 6 characters';al.style.display='';return;}
+  const res = await fetch('/api/auth/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,password})}).catch(()=>null);
+  const d = res?await res.json():{};
+  if(d.error){al.className='alert alert-err';al.textContent=d.error;al.style.display='';return;}
+  al.className='alert alert-ok';al.textContent='Password reset! Redirecting...';al.style.display='';
+  setTimeout(()=>showScreen('login'),2000);
+}
+
+async function sendInvite() {
+  const email = document.getElementById('inv-email').value.trim();
+  const name = document.getElementById('inv-name').value.trim();
+  const al = document.getElementById('inv-alert');
+  al.style.display='none';
+  if(!email){al.className='alert alert-err';al.textContent='Email required';al.style.display='';return;}
+  const res = await req('POST','/api/invites/send',{email,name});
+  if(res?.error){al.className='alert alert-err';al.textContent=res.error;al.style.display='';return;}
+  al.className='alert alert-ok';al.textContent='Invite sent to '+email;al.style.display='';
+  document.getElementById('inv-email').value='';document.getElementById('inv-name').value='';
+  loadInvites();
+}
+
+async function loadInvites() {
+  const data = await req('GET','/api/invites');
+  const el = document.getElementById('invites-list');
+  if(!el)return;
+  if(!data?.length){el.innerHTML='<div class="empty"><div class="empty-icon">📧</div><h3>No invites yet</h3></div>';return;}
+  el.innerHTML=data.slice(0,20).map(i=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:.83rem"><div><div style="font-weight:500">${i.email}</div><div style="font-size:.72rem;color:var(--text3)">${new Date(i.createdAt).toLocaleDateString()}</div></div><span class="badge ${i.used?'b-green':'b-gold'}">${i.used?'JOINED':'PENDING'}</span></div>`).join('');
+}
+
+// Override buildNav & navigate to include invites page
+function buildNav() {
+  const isAdmin = ME?.role==='admin';
+  const nav=[
+    {id:'dashboard',icon:'📊',label:'Dashboard'},
+    isAdmin?{id:'users',icon:'👥',label:'Users',section:'ADMIN PANEL'}:null,
+    isAdmin?{id:'invites',icon:'📧',label:'Invite Members'}:null,
+    {id:'committees',icon:'🏦',label:'Committees',section:isAdmin?null:'MY COMMITTEES'},
+    {id:'payments',icon:'💳',label:'Payments'},
+    {id:'payouts',icon:'💰',label:'Payouts'},
+    isAdmin?{id:'reports',icon:'📈',label:'Reports'}:null,
+    {id:'profile',icon:'⚙️',label:'Profile',section:'ACCOUNT'},
+  ].filter(Boolean);
+  let html='';
+  nav.forEach(n=>{if(n.section)html+=`<div class="nav-section">${n.section}</div>`;html+=`<button class="nav-item" id="nav-${n.id}" onclick="navigate('${n.id}')"><span class="ni">${n.icon}</span>${n.label}</button>`;});
+  document.getElementById('main-nav').innerHTML=html;
+}
+
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page)?.classList.add('active');
+  document.getElementById('nav-'+page)?.classList.add('active');
+  const handlers={dashboard:loadDash,users:loadUsers,invites:loadInvites,committees:loadComms,payments:loadGlobalPay,payouts:loadGlobalPout,reports:loadReports,profile:loadProfile};
+  handlers[page]?.();
+}
+
+(function init() {
+  const hash = window.location.hash;
+  if(hash.includes('reset-password')){
+    const token=new URLSearchParams(hash.split('?')[1]).get('token');
+    if(token){document.getElementById('reset-token').value=token;showScreen('reset');return;}
+  }
+  if(hash.includes('register')){
+    const invite=new URLSearchParams(hash.split('?')[1]).get('invite');
+    if(invite)document.getElementById('r-invite').value=invite;
+    showScreen('register');return;
+  }
+  if(TOKEN&&ME){startApp();}else{showScreen('login');}
+})();
+
+// Clock
+setInterval(() => {
+  const el = document.getElementById('dash-time');
+  if (el) el.textContent = new Date().toLocaleDateString('en-PK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + ' — ' + new Date().toLocaleTimeString();
+}, 1000);
+</script>
+</body>
+</html>
