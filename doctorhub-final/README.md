@@ -132,17 +132,28 @@ Make sure `FRONTEND_URL` in the backend matches the deployed frontend URL for St
 ## Project URL
 
 https://fa-23-bse-081-hamza-6-b-y5xy.vercel.app/
-## Credentials For Login 
-ADMIN_EMAIL="admin@example.com"
-ADMIN_PASSWORD="adminpassword"
-USER_EMAIL="haiderwahla199@gmail.com"
-USER_PASSWORD="12345678"
-DOCTOR_EMAIL="haiderraza199@gmail.com"
-DOCTOR_PASSWORD="12341234"
 
 ## Screenshots
-![Screenshot 2026-04-05 225308](https://github.com/user-attachments/assets/672d8ce4-579d-49f3-916a-43ed15b8cf70)![Screenshot 2026-04-05 225340](https://github.com/user-attachments/assets/446b6b91-df67-4965-8fb9-f877b7988599)![Screenshot 2026-04-05 225322](https://github.com/user-attachments/assets/56824911-614f-479c-87cb-8c815bb3a928)
-![Screenshot 2026-04-05 225247](https://github.com/user-attachments/assets/983e366d-28e3-47c7-8192-a256da467297)![Screenshot 2026-04-05 225432](https://github.com/user-attachments/assets/a4a5b91e-d5a6-45b9-b847-f01352e84ab5)![Screenshot 2026-04-05 225451](https://github.com/user-attachments/assets/1c6c71bb-6753-453b-ac7d-04d6060ef55c)![Screenshot 2026-04-05 225920 (1)](https://github.com/user-attachments/assets/a1490d59-0196-44ae-8b91-56e67e2ae1a4)
+<img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/2e258613-1225-459d-9711-24437c1d070e" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/ffad1b5a-9931-40d9-8d81-702e2bdba5cc" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/b938fc3a-9c30-4c0f-904b-6ba6a0c29f47" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/e30797a9-2bc4-45d9-be4d-e6928f17f404" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/33763ecf-a180-4eb8-8917-0865432ea1cb" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/53f5267c-2424-4683-abf2-3823af65a0c4" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/f7d26cdf-b3e3-44ec-89c9-44d108f9e037" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/6a18a858-30cb-40f1-8b00-974f5cabcc73" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/2b34e5a1-944b-4929-9dee-bd1d264db5d9" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/2e773882-3ab5-4712-891b-0a776574aecb" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/8a7d09de-1a07-418e-a8b2-8632f6bb2c4c" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/3275bcc0-84cd-42d6-933f-1071c5b445e4" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/40fcb26b-bce5-4466-94c7-c02f08969f8f" /><img width="1553" height="250" alt="image" src="https://github.com/user-attachments/assets/6c70e34f-72f1-441f-85d2-0186bf10e162" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/91456f74-bb36-4a94-b1ca-e0ffdd2c2f09" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/e0d38434-3654-4499-b288-ee70cfc1eae5" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/88ffbc77-bbe5-447a-92f9-3cfebd8d6732" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/b5428c82-7b66-4ae7-85fd-f9bef232ff16" /><img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/c9637c26-0db3-4fa8-b3ac-c95a03f3f71e" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
