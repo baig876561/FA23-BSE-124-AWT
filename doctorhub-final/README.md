@@ -19,9 +19,9 @@ cd backend && npm run check && npm run seed
 
 ---
 
-# CareLink - Doctor Appointment Web App (Legacy docs below)
+# Doctor Appointment Web App (Legacy docs below)
 
-CareLink is a full-stack web application that simplifies booking doctor appointments. It supports three roles: **Patient**, **Doctor**, and **Admin**, with Stripe payment integration and image uploads via Cloudinary.
+Doctor Hub is a full-stack web application that simplifies booking doctor appointments. It supports three roles: **Patient**, **Doctor**, and **Admin**, with Stripe payment integration and image uploads via Cloudinary.
 
 ## Tech Stack
 
@@ -36,7 +36,7 @@ CareLink is a full-stack web application that simplifies booking doctor appointm
 ## Project Structure
 
 ```
-CareLink/
+Doctor Hub/
 ├── frontend/        # Patient-facing React app
 ├── admin/           # Admin & Doctor React app
 └── backend/         # Express.js API server
