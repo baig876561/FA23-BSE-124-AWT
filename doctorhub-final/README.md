@@ -1,5 +1,9 @@
 # Doctor Hub
 
+## Live App URL 
+
+https://doctorhub-final.vercel.app
+
 > **Local setup guide:** see [LOCAL_SETUP.md](LOCAL_SETUP.md)
 
 Healthcare consultation & patient history platform (Patient, Doctor, Assistant, Admin, Super Admin).
